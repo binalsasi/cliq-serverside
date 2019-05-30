@@ -1,0 +1,9 @@
+# Don't track the following directories
+cliq/images/*
+cliq_env/
+
+# Don't track files ending with these extensions
+*.pyc
+
+# Exceptions
+!cliq/images/.gitkeep

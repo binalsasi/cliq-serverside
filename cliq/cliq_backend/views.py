@@ -53,3 +53,18 @@ def image_upload(request):
 			return HttpResponse(Constants.ecode_imageExists);
 	else:
 		return HttpResponse(Constants.ecode_notPost);
+
+
+def fetch_home(request):
+	if request.method == "POST":
+		username = request.POST.get(Constants.fetchHome_uUsername, '');
+#		try:
+		images = Images.objects.filter(owner=username);
+		data = [];
+		for i in images:
+			item = { 'path':i.path, 'description':i.desc, 'username' : i.owner };
+			data.append(item);
+		return HttpResponse(json.dumps(data));
+#		except 
+	else:
+		return HttpResponse(Constants.ecode_notPost);

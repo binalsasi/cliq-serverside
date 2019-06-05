@@ -1,5 +1,6 @@
 # Don't track the following directories
 cliq/images/*
+cliq/thumbs/*
 cliq_env/
 
 # Don't track files ending with these extensions
@@ -7,3 +8,4 @@ cliq_env/
 
 # Exceptions
 !cliq/images/.gitkeep
+!cliq/thumbs/.gitkeep

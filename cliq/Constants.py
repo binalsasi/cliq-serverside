@@ -1,4 +1,7 @@
 gcloud_path = "gs://zinc-advice-242819.appspot.com/";
+bucket_name = "zinc-advice-242819.appspot.com";
+thumbsize   = 128;
+thumbprefix = "T_";
 
 ecode_imageExists		= "E:0x70001";
 ecode_usernameAlreadyExists	= "E:0x80001";
@@ -6,24 +9,22 @@ ecode_emptyUsername 		= "E:0x80002";
 ecode_noFeeds			= "E:0x80003";
 ecode_notPost 			= "E:0x90001";
 
-registration_uUsername = "username";
-registration_dUsername = "username";
-registration_dKey      = "lastkey";
+uUsername	= "username";
+uImage		= "image";
+uDescription	= "description";
 
-imageUpload_uUsername	 = "username";
-imageUpload_uImage	 = "image";
-imageUpload_uDescription = "description";
-imageUpload_dStatus = "status";
-imageUpload_dId     = "id";
-
-
-fetchHome_uUsername	 = "username";
+dKey		= "lastkey";
+dUsername	= "username";
+dStatus		= "status";
+dId		= "id";
+dPath		= "path";
+dDescription	= "description";
+dB64string	= "b64string";
 
 str_helloWorld = "Hello World!";
 str_ok = "ok";
 
-dir_image = gcloud_path + "images/";
+dir_image  = gcloud_path + "images/";
 dir_thumbs = gcloud_path + "thumbs/";
-
 
 format_date = "%Y-%m-%d";

@@ -2,60 +2,54 @@ import glob;
 from PIL import Image;
 import Constants;
 import base64;
-
-bucket_name = "";
-
-def getBucket():
-	global bucket_name;
-	bucket_name = os.environ.get('BUCKET_NAME', app_identity.get_default_gcs_bucket_name());
+from google.cloud import storage
 
 thumbsize = 128;
 thumbprefix = "T_";
 
-def read(filename):
-	gcs_file = gcs.open(filename)
-	contents = gcs_file.read()
-	gcs_file.close()
-	return contents;
+def read(directory, filename):
+	storage_client = storage.Client();
+	buckets = storage_client.get_bucket(Constants.bucket_name);
+	blob = bucket.blob(directory + filename);
 
-def write(filename, mode, data):
-	gcs_file = gcs.open(filename, mode);
-	gcs_file.write(data)
-	gcs_file.close()
+	ret = blob.download_as_string();
+	
+	return ret;
+
+def write(directory, filename, data):
+	storage_client = storage.Client();
+	buckets = storage_client.get_bucket(Constants.bucket_name);
+	blob = bucket.blob(directory + filename);
+
+	blob.upload_from_string(data);
+
 
 def generateThumbnail(filename):
-	global thumbsize;
-	global thumbprefix;
+	bytes = read(Constants.dir_image, filename);
+	decoded = base64.b64decode(bytes);
 
-	bytes = read("images/" + filename);
-	image = Image.open(io.BytesIO(bytes));
-
-	image.thumbnail((thumbsize, thumbsize), Image.ANTIALIAS);
+	image = Image.open(io.BytesIO(decoded));
+	image.thumbnail((Constants.thumbsize, Constants.thumbsize), Image.ANTIALIAS);
 
 	byteIO = io.BytesIO();
-	image.save(byteIO, "JPEG");
+	image.save(byteIO, Constants.thumbnail_format);
 	byteArr = byteIO.getValue();
 
-	write("thumbs/T_"+filename, "wb", byteArr);
+	b64 = base64.b64encode(byteArr);
 
+	write(Constants.dir_thumbs, Constants.thumbprefix + filename, b64);
 
 
 def getThumbnail_b64(filename):
-	global thumbprefix;
-	with open(Constants.dir_thumbs + thumbprefix + filename, "rb") as thumb:
-		content = thumb.read();
-		b64 = base64.b64encode(content)
-		return b64;
+	bytes = read(Constants.dir_thumb, Constants.thumbprefix + filename);
+	return bytes;
 
 def saveImage_b64(filename, b64):
-	path = "images/" + filename;
-	decoded = base64.b64decode(b64);
-	write(path, "wb", decoded);
+	write(Constants.dir_image, filename, b64);
 
 def getImage_b64(filename):
-	with open(Constants.dir_image + filename, "rb") as image:
-		b64 = base64.b64encode(image.read());
-		return b64;
+	bytes = read(Constants.dir_image, filename);
+	return bytes;
 
 
 

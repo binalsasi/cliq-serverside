@@ -103,3 +103,22 @@ def fetch_thumb(request):
 			response = HttpResponse(content_type="image/jpeg")
 			red.save(response, "JPEG")
 			return response;
+
+def explicit_app_engine(request):
+    from google.cloud import storage
+
+    # If you don't specify credentials when constructing the client, the
+    # client library will look for credentials in the environment.
+    storage_client = storage.Client()
+
+    # Make an authenticated API request
+    buckets = list(storage_client.list_buckets())
+    return HttpResponse(str(buckets));
+
+#explicit_app_engine("zinc-advice-242819");
+
+def create_bucketa(request):
+	from google.cloud import storage;
+	storage_client = storage.Client();
+	bucket = storage_client.create_bucket("cliq_backend_8756473iasuh_bucket1");
+	return HttpResponse("Bucket created name : " + bucket.name);

@@ -1,3 +1,5 @@
+gcloud_path = "gs://zinc-advice-242819.appspot.com/";
+
 ecode_imageExists		= "E:0x70001";
 ecode_usernameAlreadyExists	= "E:0x80001";
 ecode_emptyUsername 		= "E:0x80002";
@@ -20,8 +22,8 @@ fetchHome_uUsername	 = "username";
 str_helloWorld = "Hello World!";
 str_ok = "ok";
 
-dir_image = "images/";
-dir_thumbs = "thumbs/";
+dir_image = gcloud_path + "images/";
+dir_thumbs = gcloud_path + "thumbs/";
 
 
 format_date = "%Y-%m-%d";

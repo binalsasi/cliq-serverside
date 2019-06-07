@@ -88,10 +88,12 @@ def fetch_home(request):
 			thumb = Functions.getThumbnail_b64(i.path);
 			thumbdata = thumb.decode("utf-8");
 			item = {
+				Constants.dPostId      : i.id,
 				Constants.dPath        : i.path,	#'path'
 				Constants.dDescription : i.desc,	#'description'
 				Constants.dUsername    : i.owner,	#'username'
-				Constants.dB64string   : thumbdata	#'b64string'
+				'leng': len(thumbdata),
+				Constants.dB64string   : thumbdata,	#'b64string'
 			       };
 
 			data.append(item);
@@ -108,7 +110,7 @@ def fetch_home(request):
 def fetch_feeds(request):
 	if request.method == "POST":
 		username = request.POST.get(Constants.uUsername, '');
-		images = Images.objects.filter(~Q(owner = username));
+		images = Images.objects.all().order_by('-ctime');
 
 		data = [];
 		for i in images:
@@ -116,6 +118,7 @@ def fetch_feeds(request):
 			imagedata = image.decode("utf-8");
 
 			item = {
+				Constants.dPostId      : i.id,
 				Constants.dPath        : i.path,	#'path'
 				Constants.dDescription : i.desc,	#'description'
 				Constants.dUsername    : i.owner,	#'username'
@@ -128,5 +131,26 @@ def fetch_feeds(request):
 			return HttpResponse(Constants.ecode_noFeeds);
 
 		return HttpResponse(json.dumps(data));
+	else:
+		return HttpResponse(Constants.ecode_notPost);
+
+
+def fetch_post(request):
+	if request.method == "POST":
+		postId = request.POST.get(Constants.uPostId, '');
+
+		post = Images.objects.get(pk = postId);
+		image = Functions.getImage_b64(post.path);
+		imagedata = image.decode("utf-8");
+
+		item = {
+			Constants.dPostId      : post.id,
+			Constants.dPath        : post.path,	#'path'
+			Constants.dDescription : post.desc,	#'description'
+			Constants.dUsername    : post.owner,	#'username'
+			Constants.dB64string   : imagedata	#'b64string'
+		       };
+
+		return HttpResponse(json.dumps(item));
 	else:
 		return HttpResponse(Constants.ecode_notPost);

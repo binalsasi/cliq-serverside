@@ -12,6 +12,7 @@ ecode_notPost 			= "E:0x90001";
 uUsername	= "username";
 uImage		= "image";
 uDescription	= "description";
+uPostId		= "postId";
 
 dKey		= "lastkey";
 dUsername	= "username";
@@ -20,6 +21,7 @@ dId		= "id";
 dPath		= "path";
 dDescription	= "description";
 dB64string	= "b64string";
+dPostId		= "postId";
 
 str_helloWorld = "Hello World!";
 str_ok = "ok";
@@ -28,3 +30,4 @@ dir_image  = gcloud_path + "images/";
 dir_thumbs = gcloud_path + "thumbs/";
 
 format_date = "%Y-%m-%d";
+thumbnail_format = "JPEG";

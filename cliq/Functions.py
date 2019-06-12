@@ -2,7 +2,7 @@ import glob;
 from PIL import Image;
 import Constants;
 import base64;
-from google.cloud import storage
+#from google.cloud import storage
 from io import BytesIO;
 
 thumbsize = 128;
@@ -25,7 +25,7 @@ def write(directory, filename, data):
 	blob.upload_from_string(data);
 
 
-def generateThumbnail(filename):
+def generateThumbnailx(filename):
 	bytes = read(Constants.dir_image, filename);
 	decoded = base64.b64decode(bytes);
 
@@ -41,14 +41,14 @@ def generateThumbnail(filename):
 	write(Constants.dir_thumbs, Constants.thumbprefix + filename, b64);
 
 
-def getThumbnail_b64(filename):
+def getThumbnail_b64x(filename):
 	bytes = read(Constants.dir_thumbs, Constants.thumbprefix + filename);
 	return bytes;
 
-def saveImage_b64(filename, b64):
+def saveImage_b64x(filename, b64):
 	write(Constants.dir_image, filename, b64);
 
-def getImage_b64(filename):
+def getImage_b64x(filename):
 	bytes = read(Constants.dir_image, filename);
 	return bytes;
 
@@ -66,31 +66,71 @@ def getImage_b64(filename):
 
 
 
+def readx(directory, filename):
+	image = open(directory + filename, "r");
+	ret = image.read();
+	image.close();
+	
+	return ret;
+
+def writex(directory, filename, data):
+	path = directory + filename;
+	afile = open(path, 'w');
+	afile.write(data);
+	afile.close();
 
 
 
-def generateThumbnailx(filename):
-	global thumbsize;
-	global thumbprefix;
-	image = Image.open(Constants.dir_image + filename);
-	image.thumbnail((thumbsize, thumbsize), Image.ANTIALIAS);
-	image.save(Constants.dir_thumbs + thumbprefix + filename, "JPEG");
+def getThumbnail_b64(filename):
+	bytes = readx(Constants.dir_thumbs, Constants.thumbprefix + filename);
+	return str.encode(bytes);
 
-def getThumbnail_b64x(filename):
+def saveImage_b64(filename, b64):
+	print(type(b64));
+	writex(Constants.dir_image, filename, b64);
+
+def getImage_b64(filename):
+	bytes = readx(Constants.dir_image, filename);
+	return str.encode(bytes);
+
+
+
+
+
+def generateThumbnail(filename):
+	bytes = readx(Constants.dir_image, filename);
+	decoded = base64.b64decode(bytes);
+
+	image = Image.open(BytesIO(decoded));
+	image.thumbnail((Constants.thumbsize, Constants.thumbsize), Image.ANTIALIAS);
+
+	buffered = BytesIO();
+	image.save(buffered, format = Constants.thumbnail_format);
+
+	b64 = base64.b64encode(buffered.getvalue());
+	b64 = b64.decode("utf-8");
+	#b64 = base64.b64encode(image.tobytes());
+	print(type(b64));
+
+	writex(Constants.dir_thumbs, Constants.thumbprefix + filename, b64);
+
+
+
+def getThumbnail_b64y(filename):
 	global thumbprefix;
 	with open(Constants.dir_thumbs + thumbprefix + filename, "rb") as thumb:
 		content = thumb.read();
 		b64 = base64.b64encode(content)
 		return b64;
 
-def saveImage_b64x(filename, b64):
+def saveImage_b64y(filename, b64):
 	path = Constants.dir_image + filename;
 	afile = open(path, 'wb');
 	decoded = base64.b64decode(b64);
 	afile.write(decoded);
 	afile.close();
 
-def getImage_b64x(filename):
+def getImage_b64y(filename):
 	with open(Constants.dir_image + filename, "rb") as image:
 		b64 = base64.b64encode(image.read());
 		return b64;

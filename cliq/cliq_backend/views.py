@@ -92,6 +92,7 @@ def fetch_home(request):
 				Constants.dPath        : i.path,	#'path'
 				Constants.dDescription : i.desc,	#'description'
 				Constants.dUsername    : i.owner,	#'username'
+				Constants.dTimestamp   : i.ctime.__str__(),
 				'leng': len(thumbdata),
 				Constants.dB64string   : thumbdata,	#'b64string'
 			       };
@@ -127,7 +128,7 @@ def fetch_feeds(request):
 				Constants.dPath        : i.path,	#'path'
 				Constants.dDescription : i.desc,	#'description'
 				Constants.dUsername    : i.owner,	#'username'
-				Constants.dTimestamp   : i.ctime,
+				Constants.dTimestamp   : i.ctime.__str__(),
 				Constants.dB64string   : imagedata	#'b64string'
 			       };
 
@@ -154,10 +155,50 @@ def fetch_post(request):
 			Constants.dPath        : post.path,	#'path'
 			Constants.dDescription : post.desc,	#'description'
 			Constants.dUsername    : post.owner,	#'username'
-			Constants.dTimestamp   : i.ctime,
+			Constants.dTimestamp   : post.ctime.__str__(),
 			Constants.dB64string   : imagedata	#'b64string'
 		       };
 
 		return HttpResponse(json.dumps(item));
 	else:
 		return HttpResponse(Constants.ecode_notPost);
+
+def fetch_profile(request):
+	if request.method == "POST":
+		username = request.POST.get(Constants.uUsername, '');
+		profileId = request.POST.get(Constants.uProfileId, '');
+
+		user = User.objects.get(username = profileId);
+		if not user:
+			return HttpResponse(Constants.ecode_noSuchUser);
+		else:
+			data = {};
+			data[Constants.dProfileId] = profileId;
+
+			images = Images.objects.all().filter(owner = profileId);
+
+			idata = [];
+			for i in images:
+				image = Functions.getThumbnail_b64(i.path);
+				imagedata = image.decode("utf-8");
+
+				item = {
+					Constants.dPostId      : i.id,
+					Constants.dPath        : i.path,	#'path'
+					Constants.dDescription : i.desc,	#'description'
+					Constants.dUsername    : i.owner,	#'username'
+					Constants.dTimestamp   : i.ctime.__str__(),
+					Constants.dB64string   : imagedata	#'b64string'
+				       };
+				idata.append(item);
+
+			if(len(idata) == 0):
+				data[Constants.dThumbs] = Constants.ecode_noFeeds;
+			else:
+				data[Constants.dThumbs] = idata;
+
+			return HttpResponse(json.dumps(data));
+	else:
+		return HttpResponse(Constants.ecode_notPost);
+
+def follow_request(request):

@@ -14,3 +14,7 @@ class Images(models.Model):
 	desc  = models.CharField(max_length = 1024);
 	owner = models.CharField(max_length = 30);
 	ctime = models.DateTimeField(auto_now_add = True);
+
+class Follows(models.Model):
+	follower = models.CharField(max_length = 30);
+	followee = models.CharField(max_length = 30);

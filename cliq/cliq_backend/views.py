@@ -110,7 +110,12 @@ def fetch_home(request):
 def fetch_feeds(request):
 	if request.method == "POST":
 		username = request.POST.get(Constants.uUsername, '');
-		images = Images.objects.all().order_by('-ctime');
+		timestamp = request.POST.get(Constants.uTimestamp, '');
+
+		if(timestamp == '' or timestamp == 'null'):
+			images = Images.objects.all().order_by('-ctime')[:Constants.feedBatchCount];
+		else:
+			images = Images.objects.all().filter(ctime__lt=timestamp).order_by('-ctime')[:Constants.feedBatchCount];
 
 		data = [];
 		for i in images:
@@ -122,6 +127,7 @@ def fetch_feeds(request):
 				Constants.dPath        : i.path,	#'path'
 				Constants.dDescription : i.desc,	#'description'
 				Constants.dUsername    : i.owner,	#'username'
+				Constants.dTimestamp   : i.ctime,
 				Constants.dB64string   : imagedata	#'b64string'
 			       };
 
@@ -148,6 +154,7 @@ def fetch_post(request):
 			Constants.dPath        : post.path,	#'path'
 			Constants.dDescription : post.desc,	#'description'
 			Constants.dUsername    : post.owner,	#'username'
+			Constants.dTimestamp   : i.ctime,
 			Constants.dB64string   : imagedata	#'b64string'
 		       };
 

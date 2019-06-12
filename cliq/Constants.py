@@ -2,6 +2,7 @@ gcloud_path = "gs://zinc-advice-242819.appspot.com/";
 bucket_name = "zinc-advice-242819.appspot.com";
 thumbsize   = 128;
 thumbprefix = "T_";
+feedBatchCount = 10;
 
 ecode_imageExists		= "E:0x70001";
 ecode_usernameAlreadyExists	= "E:0x80001";
@@ -13,6 +14,7 @@ uUsername	= "username";
 uImage		= "image";
 uDescription	= "description";
 uPostId		= "postId";
+uTimestamp	= "timestamp";
 
 dKey		= "lastkey";
 dUsername	= "username";
@@ -22,6 +24,7 @@ dPath		= "path";
 dDescription	= "description";
 dB64string	= "b64string";
 dPostId		= "postId";
+dTimestamp	= "timestamp";
 
 str_helloWorld = "Hello World!";
 str_ok = "ok";

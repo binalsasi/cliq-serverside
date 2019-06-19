@@ -1,7 +1,7 @@
 from django.http import HttpResponse;
 from django.db import IntegrityError;
 from django.db.models import Q;
-from cliq_backend.models import User, Images, Follows, Likes;
+from cliq_backend.models import User, Images, Follows, Likes, Comments;
 from datetime import datetime;
 import Constants;
 import random;
@@ -466,6 +466,110 @@ def unlikes_post(request):
 
 			except Likes.DoesNotExist as e:
 				return HttpResponse(Constants.getCode("ecode_notLiked"));
+
+		except Images.DoesNotExist as e:
+			return HttpResponse(Constants.getCode("ecode_noSuchPost"));
+	else:
+		return HttpResponse(Constants.getCode("ecode_notPost"));
+
+def discover_people(request):
+	if request.method == "POST":
+		username = request.POST.get(Constants.getCode("uUsername"), '');
+
+		try:
+			users = User.objects.all().filter(~Q(username=username))[:Constants.discoverPeopleCount];
+
+			data = [];
+			for user in users:
+				data.append(user.username);
+
+			if(len(data) == 0):
+				return HttpResponse(Constants.getCode("ecode_noUser"));
+
+			return HttpResponse(json.dumps(data));
+
+		except User.DoesNotExist as e:
+			return HttpResponse(Constants.getCode("ecode_noUser"));
+	else:
+		return HttpResponse(Constants.getCode("ecode_notPost"));
+
+def add_comment(request):
+	if request.method == "POST":
+		username = request.POST.get(Constants.getCode("uUsername"), '');
+		postId   = request.POST.get(Constants.getCode("uPostId"), '');
+		comment  = request.POST.get(Constants.getCode("uText"), '');
+
+		try:
+			post = Images.objects.get(id=postId);
+
+			comment = Comments(imageId = postId, username = username, comment = comment);
+			comment.save();
+			if not comment:
+				return HttpResponse(Constants.getCode("ecode_unableToComment"));
+			else:
+				return HttpResponse(Constants.getCode("OK"));
+
+		except Images.DoesNotExist as e:
+			return HttpResponse(Constants.getCode("ecode_noSuchPost"));
+	else:
+		return HttpResponse(Constants.getCode("ecode_notPost"));
+
+def remove_comment(request):
+	if request.method == "POST":
+		username  = request.POST.get(Constants.getCode("uUsername"), '');
+		postId    = request.POST.get(Constants.getCode("uPostId"), '');
+		commentId = request.POST.get(Constants.getCode("uCommentId"), '');
+
+		try:
+			post = Images.objects.get(id=postId);
+
+			try:
+				comment = Comments.objects.get(id=commentId);
+				commentTime = comment.ctime;
+				currentTime = datetime.now();
+				difference = currentTime - commentTime;
+				if(difference.seconds > maxDeletePeriodinSeconds):
+					return HttpResponse(Constants.getCode("ecode_tooLate"));
+
+				comment.delete();
+				return HttpResponse(Constants.getCode("OK"));
+
+			except Comments.DoesNotExist as e:
+				return HttpResponse(Constants.getCode("ecode_noSuchComment"));
+
+		except Images.DoesNotExist as e:
+			return HttpResponse(Constants.getCode("ecode_noSuchPost"));
+	else:
+		return HttpResponse(Constants.getCode("ecode_notPost"));
+
+def get_comments(request):
+	if request.method == "POST":
+		username  = request.POST.get(Constants.getCode("uUsername"), '');
+		postId    = request.POST.get(Constants.getCode("uPostId"), '');
+
+		try:
+			post = Images.objects.get(id=postId);
+
+			try:
+				comments = Comments.objects.all().filter(imageId = postId).order_by("-ctime");
+
+				data = [];
+				for comment in comments:
+					item = {
+						Constants.getCode("dCommentId"): comment.id,
+						Constants.getCode("dUsername"):  comment.username,
+						Constants.getCode("dText"):      comment.comment,
+						Constants.getCode("dTimestamp"): comment.ctime.__str__(),
+					};
+					data.append(item);
+
+				if(len(data) == 0):
+					return HttpResponse(Constants.getCode("ecode_noComments"));
+
+				return HttpResponse(json.dumps(data));
+
+			except Comments.DoesNotExist as e:
+				return HttpResponse(Constants.getCode("ecode_noComments"));
 
 		except Images.DoesNotExist as e:
 			return HttpResponse(Constants.getCode("ecode_noSuchPost"));

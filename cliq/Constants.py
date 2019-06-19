@@ -4,6 +4,8 @@ bucket_name = "zinc-advice-242819.appspot.com";
 thumbsize   = 128;
 thumbprefix = "T_";
 feedBatchCount = 4;
+discoverPeopleCount = 10;
+maxDeleteTimeinSeconds = 10 * 60;
 
 codebase = {
 "ecode_imageExists" 		: "E:0x70001",
@@ -26,6 +28,10 @@ codebase = {
 "ecode_alreadyLiked"		: "E:0x80016",
 "ecode_notLiked"		: "E:0x80017",
 "ecode_unableToLike"		: "E:0x80018",
+"ecode_unableToComment"		: "E:0x80019",
+"ecode_tooLate"			: "E:0x80020",
+"ecode_noSuchComment"		: "E:0x80021",
+"ecode_noComments"		: "E:0x80022",
 
 "uUsername" 			: "username",
 "uImage" 			: "image",
@@ -36,6 +42,9 @@ codebase = {
 "uFollowee" 			: "followee",
 "uAction" 			: "action",
 "uSearchKey"			: "searchkey",
+"uText"				: "text",
+"uCommentId"			: "commentId",
+
 
 "dKey" 				: "lastkey",
 "dUsername" 			: "username",
@@ -53,6 +62,8 @@ codebase = {
 "dFollowStatus" 		: "status",
 "dFollowee" 			: "followee",
 "dLikes"			: "likedby",
+"dCommentId"			: "commentId",
+"dText"				: "dText",
 
 "OK" 				: "ok",
 };

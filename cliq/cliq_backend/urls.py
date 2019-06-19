@@ -19,4 +19,8 @@ urlpatterns = [
 	path('search_username', views.search_username, name='search_username'),
 	path('likes_post', views.likes_post, name='likes_post'),
 	path('unlikes_post', views.unlikes_post, name='unlikes_post'),
+	path('discover_people', views.discover_people, name='discover_people'),
+	path('add_comment', views.add_comment, name='add_comment'),
+	path('remove_comment', views.remove_comment, name='remove_comment'),
+	path('get_comments', views.get_comments, name='get_comments'),
 ]

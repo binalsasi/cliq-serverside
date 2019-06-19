@@ -20,7 +20,15 @@ class Follows(models.Model):
 	follower = models.CharField(max_length = 30);
 	followee = models.CharField(max_length = 30);
 	fstatus  = models.CharField(max_length = 10);
+	ctime = models.DateTimeField(auto_now_add = True);
 
 class Likes(models.Model):
 	imageId  = models.IntegerField();
 	username = models.CharField(max_length = 30);
+	ctime = models.DateTimeField(auto_now_add = True);
+
+class Comments(models.Model):
+	imageId  = models.IntegerField();
+	username = models.CharField(max_length = 30);
+	comment  = models.TextField();
+	ctime    = models.DateTimeField(auto_now_add = True);

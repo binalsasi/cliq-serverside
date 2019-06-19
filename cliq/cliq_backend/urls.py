@@ -17,4 +17,6 @@ urlpatterns = [
 	path('fetch_requests', views.fetch_requests, name='fetch_requests'),
 	path('follow_request_action', views.follow_request_action, name='follow_request_action'),
 	path('search_username', views.search_username, name='search_username'),
+	path('likes_post', views.likes_post, name='likes_post'),
+	path('unlikes_post', views.unlikes_post, name='unlikes_post'),
 ]

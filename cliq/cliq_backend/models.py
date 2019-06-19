@@ -19,4 +19,8 @@ class Images(models.Model):
 class Follows(models.Model):
 	follower = models.CharField(max_length = 30);
 	followee = models.CharField(max_length = 30);
-	fstatus   = models.CharField(max_length = 10);
+	fstatus  = models.CharField(max_length = 10);
+
+class Likes(models.Model):
+	imageId  = models.IntegerField();
+	username = models.CharField(max_length = 30);

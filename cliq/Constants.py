@@ -21,6 +21,11 @@ codebase = {
 "ecode_badAction" 		: "E:0x80011",
 "ecode_noRequest" 		: "E:0x80012",
 "ecode_noResult"		: "E:0x80013",
+"ecode_noFollowing"		: "E:0x80014",
+"ecode_noSuchPost"		: "E:0x80015",
+"ecode_alreadyLiked"		: "E:0x80016",
+"ecode_notLiked"		: "E:0x80017",
+"ecode_unableToLike"		: "E:0x80018",
 
 "uUsername" 			: "username",
 "uImage" 			: "image",
@@ -47,6 +52,7 @@ codebase = {
 "dFollower" 			: "follower",
 "dFollowStatus" 		: "status",
 "dFollowee" 			: "followee",
+"dLikes"			: "likedby",
 
 "OK" 				: "ok",
 };

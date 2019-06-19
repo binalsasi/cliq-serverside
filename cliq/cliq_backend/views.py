@@ -1,7 +1,7 @@
 from django.http import HttpResponse;
 from django.db import IntegrityError;
 from django.db.models import Q;
-from cliq_backend.models import User, Images, Follows;
+from cliq_backend.models import User, Images, Follows, Likes;
 from datetime import datetime;
 import Constants;
 import random;
@@ -92,6 +92,11 @@ def fetch_home(request):
 
 		data = [];
 		for i in images:
+			likes = Likes.objects.all().filter(imageId = i.id);
+			likedata = [];
+			for like in likes:
+				likedata.append(like.username);
+
 			thumb = Functions.getThumbnail_b64(i.path);
 			thumbdata = thumb.decode("utf-8");
 			item = {
@@ -99,8 +104,8 @@ def fetch_home(request):
 				Constants.getCode("dPath")        : i.path,	#'path'
 				Constants.getCode("dDescription") : i.desc,	#'description'
 				Constants.getCode("dUsername")    : i.owner,	#'username'
+				Constants.getCode("dLikes")	  : likedata,
 				Constants.getCode("dTimestamp")   : i.ctime.__str__(),
-				'leng': len(thumbdata),
 				Constants.getCode("dB64string")   : thumbdata,	#'b64string'
 			       };
 
@@ -120,13 +125,26 @@ def fetch_feeds(request):
 		username = request.POST.get(Constants.getCode("uUsername"), '');
 		timestamp = request.POST.get(Constants.getCode("uTimestamp"), '');
 
+		followlist = Follows.objects.all().filter(follower = username).filter(fstatus = "accepted");
+		if followlist.count() == 0:
+			return HttpResponse(Constants.getCode("ecode_noFollowing"));
+
+		userlist = [];
+		for user in followlist:
+			userlist.append(user.followee)
+
 		if(timestamp == '' or timestamp == 'null'):
-			images = Images.objects.all().order_by('-ctime')[:Constants.feedBatchCount];
+			images = Images.objects.all().filter(owner__in=userlist).order_by('-ctime')[:Constants.feedBatchCount];
 		else:
-			images = Images.objects.all().filter(ctime__lt=timestamp).order_by('-ctime')[:Constants.feedBatchCount];
+			images = Images.objects.all().filter(owner__in=userlist).filter(ctime__lt=timestamp).order_by('-ctime')[:Constants.feedBatchCount];
 
 		data = [];
 		for i in images:
+			likes = Likes.objects.all().filter(imageId = i.id);
+			likedata = [];
+			for like in likes:
+				likedata.append(like.username);
+
 			image = Functions.getImage_b64(i.path);
 			imagedata = image.decode("utf-8");
 
@@ -135,8 +153,9 @@ def fetch_feeds(request):
 				Constants.getCode("dPath")        : i.path,	#'path'
 				Constants.getCode("dDescription") : i.desc,	#'description'
 				Constants.getCode("dUsername")    : i.owner,	#'username'
+				Constants.getCode("dLikes")	  : likedata,
 				Constants.getCode("dTimestamp")   : i.ctime.__str__(),
-				Constants.getCode("dB64string")   : imagedata	#'b64string'
+				Constants.getCode("dB64string")   : imagedata,	#'b64string'
 			       };
 
 			data.append(item);
@@ -226,7 +245,7 @@ def follow_request(request):
 				return HttpResponse(Constants.getCode("ecode_alreadyFollow"));
 
 			except Follows.DoesNotExist:
-				followRow = Follows(follower = username, followee = followee, status = "requested");
+				followRow = Follows(follower = username, followee = followee, fstatus = "requested");
 				followRow.save();
 				if not followRow:
 					return HttpResponse(Constants.getCode("ecode_unableFollow"));
@@ -406,3 +425,49 @@ def search_username(request):
 	else:
 		return HttpResponse(Constants.getCode("ecode_notPost"));
 
+
+def likes_post(request):
+	if request.method == "POST":
+		username = request.POST.get(Constants.getCode("uUsername"), '');
+		postId   = request.POST.get(Constants.getCode("uPostId"), '');
+
+		try:
+			post = Images.objects.get(id=postId);
+
+			try:
+				like = Likes.objects.get(imageId = postId, username = username);
+				return HttpResponse(Constants.getCode("ecode_alreadyLiked"));
+			except Likes.DoesNotExist as e:
+				like = Likes(imageId = postId, username = username);
+				like.save();
+				if not like:
+					return HttpResponse(Constants.getCode("ecode_unableToLike"));
+				else:
+					return HttpResponse(Constants.getCode("OK"));
+
+		except Images.DoesNotExist as e:
+			return HttpResponse(Constants.getCode("ecode_noSuchPost"));
+	else:
+		return HttpResponse(Constants.getCode("ecode_notPost"));
+
+
+def unlikes_post(request):
+	if request.method == "POST":
+		username = request.POST.get(Constants.getCode("uUsername"), '');
+		postId   = request.POST.get(Constants.getCode("uPostId"), '');
+
+		try:
+			post = Images.objects.get(id=postId);
+
+			try:
+				like = Likes.objects.get(imageId = postId, username = username);
+				like.delete();
+				return HttpResponse(Constants.getCode("OK"));
+
+			except Likes.DoesNotExist as e:
+				return HttpResponse(Constants.getCode("ecode_notLiked"));
+
+		except Images.DoesNotExist as e:
+			return HttpResponse(Constants.getCode("ecode_noSuchPost"));
+	else:
+		return HttpResponse(Constants.getCode("ecode_notPost"));

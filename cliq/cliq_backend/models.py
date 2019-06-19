@@ -5,6 +5,7 @@ class User(models.Model):
 	lastkey  = models.CharField(max_length = 64);
 	ctime    = models.DateTimeField(auto_now_add = True);
 	ltime    = models.DateTimeField(auto_now = True);
+	privacy  = models.CharField(max_length = 30, default="private");
 
 	def __str__(self):
 		return self.username;
@@ -18,3 +19,4 @@ class Images(models.Model):
 class Follows(models.Model):
 	follower = models.CharField(max_length = 30);
 	followee = models.CharField(max_length = 30);
+	fstatus   = models.CharField(max_length = 10);

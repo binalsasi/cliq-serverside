@@ -2,7 +2,7 @@ import glob;
 from PIL import Image;
 import Constants;
 import base64;
-#from google.cloud import storage
+from google.cloud import storage
 from io import BytesIO;
 
 thumbsize = 128;
@@ -25,7 +25,7 @@ def write(directory, filename, data):
 	blob.upload_from_string(data);
 
 
-def generateThumbnailx(filename):
+def generateThumbnail(filename):
 	bytes = read(Constants.dir_image, filename);
 	decoded = base64.b64decode(bytes);
 
@@ -41,14 +41,14 @@ def generateThumbnailx(filename):
 	write(Constants.dir_thumbs, Constants.thumbprefix + filename, b64);
 
 
-def getThumbnail_b64x(filename):
+def getThumbnail_b64(filename):
 	bytes = read(Constants.dir_thumbs, Constants.thumbprefix + filename);
 	return bytes;
 
-def saveImage_b64x(filename, b64):
+def saveImage_b64(filename, b64):
 	write(Constants.dir_image, filename, b64);
 
-def getImage_b64x(filename):
+def getImage_b64(filename):
 	bytes = read(Constants.dir_image, filename);
 	return bytes;
 
@@ -81,15 +81,15 @@ def writex(directory, filename, data):
 
 
 
-def getThumbnail_b64(filename):
+def getThumbnail_b64x(filename):
 	bytes = readx(Constants.dir_thumbs, Constants.thumbprefix + filename);
 	return str.encode(bytes);
 
-def saveImage_b64(filename, b64):
+def saveImage_b64x(filename, b64):
 	print(type(b64));
 	writex(Constants.dir_image, filename, b64);
 
-def getImage_b64(filename):
+def getImage_b64x(filename):
 	bytes = readx(Constants.dir_image, filename);
 	return str.encode(bytes);
 
@@ -97,7 +97,7 @@ def getImage_b64(filename):
 
 
 
-def generateThumbnail(filename):
+def generateThumbnailx(filename):
 	bytes = readx(Constants.dir_image, filename);
 	decoded = base64.b64decode(bytes);
 

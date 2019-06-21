@@ -1,3 +1,10 @@
+#
+#	view.py
+#
+#	This file is the consolidation of all *_functions.py
+#
+
+
 from django.http import HttpResponse;
 from django.db import IntegrityError;
 from django.db.models import Q;

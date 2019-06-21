@@ -1,4 +1,13 @@
-#gcloud_path = "gs://zinc-advice-242819.appspot.com/";
+#
+#	Constants.py
+#
+#	This file contains constants, keywords, error codes etc which is used 
+#	in the app.
+#
+
+
+# constants
+
 gcloud_path = "";
 bucket_name = "zinc-advice-242819.appspot.com";
 thumbsize   = 128;
@@ -6,8 +15,18 @@ thumbprefix = "T_";
 feedBatchCount = 4;
 discoverPeopleCount = 10;
 maxDeleteTimeinSeconds = 10 * 60;
+dir_image  = gcloud_path + "images/";
+dir_thumbs = gcloud_path + "thumbs/";
+
+format_date = "%Y-%m-%d";
+thumbnail_format = "JPEG";
+
+
+# code base
 
 codebase = {
+
+# error codes
 "ecode_imageExists" 		: "E:0x70001",
 "ecode_usernameAlreadyExists" 	: "E:0x80001",
 "ecode_emptyUsername " 		: "E:0x80002",
@@ -32,7 +51,9 @@ codebase = {
 "ecode_tooLate"			: "E:0x80020",
 "ecode_noSuchComment"		: "E:0x80021",
 "ecode_noComments"		: "E:0x80022",
+"ecode_notFollowing"		: "E:0x80023",
 
+# upstream key words
 "uUsername" 			: "username",
 "uImage" 			: "image",
 "uDescription" 			: "description",
@@ -45,7 +66,7 @@ codebase = {
 "uText"				: "text",
 "uCommentId"			: "commentId",
 
-
+# downstream key words
 "dKey" 				: "lastkey",
 "dUsername" 			: "username",
 "dStatus" 			: "status",
@@ -65,15 +86,11 @@ codebase = {
 "dCommentId"			: "commentId",
 "dText"				: "dText",
 
+# OK
 "OK" 				: "ok",
 };
 
+# getCode() to get code from the code base
 def getCode(name):
 	global codebase;
 	return codebase[name];
-
-dir_image  = gcloud_path + "images/";
-dir_thumbs = gcloud_path + "thumbs/";
-
-format_date = "%Y-%m-%d";
-thumbnail_format = "JPEG";

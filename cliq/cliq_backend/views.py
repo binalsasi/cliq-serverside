@@ -196,6 +196,10 @@ def fetch_profile(request):
 
 		try:
 			user = User.objects.get(username = profileId);
+			follows = Follows.objects.get(followee = profileId, follower = username);
+
+			if not follows:
+				return HttpResponse((Constants.getCode("ecode_notFollowing"));
 
 			data = {};
 			data[Constants.getCode("dProfileId")] = profileId;
@@ -226,6 +230,9 @@ def fetch_profile(request):
 
 		except User.DoesNotExist as e:
 			return HttpResponse(Constants.getCode("ecode_noSuchUser"));
+		except Follows.DoesNotExist as e:
+			return HttpResponse(Constants.getCode("ecode_notFollowing"));
+
 	else:
 		return HttpResponse(Constants.getCode("ecode_notPost"));
 
@@ -245,7 +252,12 @@ def follow_request(request):
 				return HttpResponse(Constants.getCode("ecode_alreadyFollow"));
 
 			except Follows.DoesNotExist:
-				followRow = Follows(follower = username, followee = followee, fstatus = "requested");
+				if user.privacy == "private":
+					reqstatus = "requested";
+				else
+					reqstatus = "accepted";
+
+				followRow = Follows(follower = username, followee = followee, fstatus = reqstatus);
 				followRow.save();
 				if not followRow:
 					return HttpResponse(Constants.getCode("ecode_unableFollow"));
